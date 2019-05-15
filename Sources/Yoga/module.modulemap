@@ -1,0 +1,5 @@
+module Yoga [system] {
+  header "headers/Yoga.h"
+  link "yoga"
+  export *
+}
