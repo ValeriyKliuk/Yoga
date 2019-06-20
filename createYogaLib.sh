@@ -9,8 +9,16 @@ echo Done ✅.
 
 echo "Compiling Yoga... 🏃🏽‍♀️"
 
+OS_IDENTIFIER=$OSTYPE
+AR=ar
+
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
 clang -c yoga/yoga/*.cpp -std=c++1y -fPIC
+elif [[ "$XCOMPILE" == "iOS" ]]; then
+echo "Cross-compiling for iOS..."
+OS_IDENTIFIER="iOS"
+clang -isysroot $(xcrun --sdk iphoneos --show-sdk-path) -arch armv7 -arch armv7s -arch arm64 -c yoga/yoga/*.cpp -std=c++1y
+AR=$(xcrun -sdk iphoneos -find ar)
 else
 clang -c yoga/yoga/*.cpp -std=c++1y
 fi
@@ -18,12 +26,12 @@ fi
 echo Done ✅.
 
 echo "Creating Yoga Library 📚..."
-ar -rcs libyoga.a *.o
+$AR -rcs libyoga.a *.o
 
-rm -rf ../Sources/Yoga/$OSTYPE
-mkdir ../Sources/Yoga/$OSTYPE
+rm -rf ../Sources/Yoga/$OS_IDENTIFIER
+mkdir ../Sources/Yoga/$OS_IDENTIFIER
 
-cp libyoga.a ../Sources/Yoga/$OSTYPE
+cp libyoga.a ../Sources/Yoga/$OS_IDENTIFIER
 cd ../
 
 rm -rf temp
